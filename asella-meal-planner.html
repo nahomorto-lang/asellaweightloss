@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asella Organic × Claude AI — Ethiopian Meal Planner</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --parchment:#F5F1E6;
+  --parchment-deep:#E7DFC9;
+  --ink:#1A150F;
+  --forest:#1E3A22;
+  --forest-deep:#0D1F10;
+  --berbere:#B23A1E;
+  --gold:#C98A2B;
+  --honey:#D9A441;
+  --clay:#5C4A2E;
+  --cream-card:#FFFDF6;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--parchment);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  line-height:1.5;
+}
+h1,h2,h3,.display{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin:0;
+}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;}
+
+/* ---------- weave divider (signature element) ---------- */
+.weave{
+  height:14px;
+  width:100%;
+  background-image:repeating-linear-gradient(
+    115deg,
+    var(--forest-deep) 0px, var(--forest-deep) 14px,
+    var(--gold) 14px, var(--gold) 26px,
+    var(--forest) 26px, var(--forest) 34px,
+    var(--berbere) 34px, var(--berbere) 40px
+  );
+  background-size: 56px 100%;
+  opacity:.9;
+}
+
+/* ---------- header ---------- */
+header{
+  padding:26px 6vw 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.wordmark{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.wordmark span{color:var(--forest-deep);}
+.tagline{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--clay);
+  letter-spacing:.03em;
+}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:34px 6vw 46px;
+  max-width:1100px;
+}
+.hero h1{
+  font-size:clamp(34px,5.4vw,64px);
+  line-height:1.02;
+  color:var(--forest-deep);
+}
+.hero h1 em{
+  font-style:normal;
+  color:var(--gold);
+}
+.hero p.sub{
+  max-width:560px;
+  margin-top:16px;
+  font-size:17px;
+  color:var(--clay);
+}
+.product-strip{
+  margin-top:34px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:14px;
+}
+.product-chip{
+  background:var(--cream-card);
+  border:1px solid var(--parchment-deep);
+  border-radius:4px;
+  padding:14px 16px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+.product-chip svg{flex:0 0 auto;margin-top:2px;}
+.product-chip .pname{font-weight:600;font-size:14.5px;}
+.product-chip .pdesc{font-size:12.5px;color:var(--clay);margin-top:2px;}
+
+/* ---------- form ---------- */
+main{padding:0 6vw 80px;max-width:1100px;margin:0 auto;}
+.panel{
+  background:var(--cream-card);
+  border:1px solid var(--parchment-deep);
+  border-radius:6px;
+  padding:34px clamp(20px,4vw,44px);
+  margin-top:40px;
+}
+.panel h2{
+  font-size:clamp(24px,3vw,32px);
+  color:var(--forest-deep);
+}
+.panel .lede{color:var(--clay);margin-top:8px;font-size:15px;max-width:520px;}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:20px;
+  margin-top:28px;
+}
+.field label{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--forest-deep);
+  margin-bottom:7px;
+}
+.field input,.field select{
+  width:100%;
+  padding:11px 12px;
+  border:1.5px solid var(--parchment-deep);
+  border-radius:4px;
+  background:#fff;
+  font-family:'Work Sans',sans-serif;
+  font-size:15px;
+  color:var(--ink);
+}
+.field input:focus,.field select:focus{
+  outline:none;
+  border-color:var(--forest);
+}
+
+.goal-toggle{
+  display:flex;
+  gap:12px;
+  margin-top:28px;
+  flex-wrap:wrap;
+}
+.goal-btn{
+  flex:1;
+  min-width:200px;
+  padding:16px;
+  border-radius:5px;
+  border:1.5px solid var(--parchment-deep);
+  background:#fff;
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .15s, background .15s;
+}
+.goal-btn .gt{font-weight:600;font-size:15.5px;}
+.goal-btn .gd{font-size:12.5px;color:var(--clay);margin-top:3px;}
+.goal-btn.active{
+  border-color:var(--forest-deep);
+  background:#EEF2EA;
+}
+.goal-btn.active .gt{color:var(--forest-deep);}
+
+.generate-btn{
+  margin-top:30px;
+  width:100%;
+  padding:17px;
+  background:var(--forest-deep);
+  color:var(--parchment);
+  border:none;
+  border-radius:5px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:14px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background .15s;
+}
+.generate-btn:hover{background:var(--forest);}
+.generate-btn:disabled{background:#ccc;cursor:not-allowed;}
+.err{color:var(--berbere);font-size:13px;margin-top:14px;display:none;font-family:'IBM Plex Mono',monospace;}
+
+/* ---------- results ---------- */
+#results{display:none;margin-top:46px;}
+.results-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-bottom:26px;
+}
+.dl-btn{
+  padding:13px 22px;
+  background:var(--honey);
+  color:var(--forest-deep);
+  border:none;
+  border-radius:5px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.dl-btn:hover{background:#c4923a;}
+
+.summary-card{
+  background:var(--forest-deep);
+  color:var(--parchment);
+  border-radius:6px;
+  padding:28px clamp(18px,3vw,36px);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:20px;
+}
+.summary-card .s-item .s-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  opacity:.7;
+}
+.summary-card .s-item .s-value{
+  font-family:'Fraunces',serif;
+  font-size:28px;
+  font-weight:600;
+  margin-top:4px;
+}
+
+.day-card{
+  background:var(--cream-card);
+  border:1px solid var(--parchment-deep);
+  border-radius:6px;
+  margin-top:20px;
+  overflow:hidden;
+}
+.day-head{
+  background:var(--parchment-deep);
+  padding:14px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.day-head .dname{font-family:'Fraunces',serif;font-weight:700;font-size:19px;color:var(--forest-deep);}
+.day-head .dtotal{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--clay);}
+.meal-row{
+  display:flex;
+  gap:18px;
+  padding:16px 22px;
+  border-top:1px solid var(--parchment-deep);
+  align-items:flex-start;
+}
+.meal-row .icon-wrap{flex:0 0 30px;padding-top:2px;}
+.meal-row .m-slot{
+  flex:0 0 128px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--gold);
+  padding-top:3px;
+}
+.meal-row .m-body{flex:1;}
+.meal-row .m-name{font-weight:600;font-size:15px;}
+.meal-row .m-desc{font-size:13px;color:var(--clay);margin-top:2px;}
+.meal-row .m-kcal{
+  flex:0 0 auto;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  color:var(--forest-deep);
+  padding-top:3px;
+  white-space:nowrap;
+}
+.booster-row{background:#FBF3E4;}
+
+footer{
+  padding:40px 6vw 60px;
+  max-width:1100px;
+  margin:0 auto;
+}
+.foot-brand{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:15px;
+  color:var(--forest-deep);
+}
+.copyright{
+  margin-top:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--clay);
+  letter-spacing:.02em;
+}
+.disclaimer{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--clay);
+  max-width:640px;
+  line-height:1.6;
+}
+
+/* ---------- watermark (visible in-page, on print, and baked into PDF export) ---------- */
+#results{position:relative;}
+.watermark-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:5;
+  opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='220'><text x='0' y='40' font-family='Georgia,serif' font-size='22' fill='%230D1F10' transform='rotate(-28 210 110)' text-anchor='middle'>MEAL PLAN BY ASELLA ORGANIC</text></svg>");
+  background-repeat:repeat;
+  background-size:420px 220px;
+}
+
+@media print{
+  header, .weave, .hero, .panel, .results-top{display:none !important;}
+  body{background:#fff;}
+  #results{display:block !important;margin-top:0;}
+  .watermark-layer{opacity:.12;}
+  .day-card{break-inside:avoid;}
+}
+
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">Asella <span>Organic</span></div>
+  <div class="tagline">MEAL PLANNER — POWERED BY ASELLA ORGANIC × CLAUDE AI</div>
+</header>
+
+<div class="weave"></div>
+
+<div class="hero">
+  <h1>Eat the highlands.<br>Reach your <em>goal</em>.</h1>
+  <p class="sub">Tell us your age, height and weight, choose weight gain or weight loss, and we'll build you a 7‑day meal plan built entirely from Ethiopian dishes — with Asella Organic's Moringa, Chia Seed, Pumpkin Seed and Hibiscus Tea woven into every single day.</p>
+
+  <div class="product-strip">
+    <div class="product-chip">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 4 7 4 12c0 5 3.5 9 8 9s8-4 8-9c0-5-3-10-8-10z" stroke="#2F4B2A" stroke-width="1.6"/><path d="M12 2v19" stroke="#2F4B2A" stroke-width="1.6"/></svg>
+      <div><div class="pname">Moringa Powder</div><div class="pdesc">Stirred into tea, porridge or smoothies for iron and protein</div></div>
+    </div>
+    <div class="product-chip">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="7" cy="8" r="1.6" fill="#7A4A2B"/><circle cx="14" cy="6" r="1.6" fill="#7A4A2B"/><circle cx="17" cy="13" r="1.6" fill="#7A4A2B"/><circle cx="10" cy="14" r="1.6" fill="#7A4A2B"/><circle cx="6" cy="17" r="1.6" fill="#7A4A2B"/><circle cx="15" cy="19" r="1.6" fill="#7A4A2B"/></svg>
+      <div><div class="pname">Chia Seed</div><div class="pdesc">Pudding, drinks or stirred into fitfit for fibre and fullness</div></div>
+    </div>
+    <div class="product-chip">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="6" ry="9" stroke="#D9A441" stroke-width="1.6"/><path d="M12 3v18" stroke="#D9A441" stroke-width="1.6"/></svg>
+      <div><div class="pname">Pumpkin Seed</div><div class="pdesc">Roasted, as a daily afternoon snack rich in magnesium</div></div>
+    </div>
+    <div class="product-chip">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 3 2 4 0 6-2-2-2-3 0-6z" fill="#B23A1E"/><path d="M12 3c-2 3-2 4 0 6M12 9c2 2 3 5 0 7-3-2-2-5 0-7zM12 16c-2 1-4 3-3 5 2 1 4-1 3-5zM12 16c2 1 4 3 3 5-2 1-4-1-3-5z" stroke="#B23A1E" stroke-width="1.3"/></svg>
+      <div><div class="pname">Hibiscus Tea</div><div class="pdesc">Your daily morning ritual drink, rich in vitamin C</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="panel">
+    <h2>Build your plan</h2>
+    <p class="lede">A few details and we'll calculate your calorie target and generate a full week of meals.</p>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="age">Age (years)</label>
+        <input type="number" id="age" min="14" max="90" placeholder="e.g. 28">
+      </div>
+      <div class="field">
+        <label for="gender">Sex</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" min="120" max="230" placeholder="e.g. 170">
+      </div>
+      <div class="field">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" min="30" max="220" placeholder="e.g. 65">
+      </div>
+      <div class="field">
+        <label for="activity">Activity level</label>
+        <select id="activity">
+          <option value="1.2">Sedentary (desk job, little exercise)</option>
+          <option value="1.375">Light (exercise 1–3 days/week)</option>
+          <option value="1.55" selected>Moderate (exercise 3–5 days/week)</option>
+          <option value="1.725">Active (exercise 6–7 days/week)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="goal-toggle">
+      <button class="goal-btn active" data-goal="gain" id="btnGain">
+        <div class="gt">Weight Gain</div>
+        <div class="gd">Calorie-dense, hearty Ethiopian dishes</div>
+      </button>
+      <button class="goal-btn" data-goal="lose" id="btnLose">
+        <div class="gt">Weight Loss</div>
+        <div class="gd">Vegetable-forward, lighter portions</div>
+      </button>
+    </div>
+
+    <button class="generate-btn" id="genBtn">Generate my Ethiopian meal plan</button>
+    <div class="err" id="errMsg">Please fill in age, height and weight with realistic values.</div>
+  </div>
+
+  <div id="results">
+    <div class="watermark-layer"></div>
+    <div class="results-top">
+      <h2 style="color:var(--forest-deep);font-size:26px;">Your 7‑day plan</h2>
+      <button class="dl-btn" id="pdfBtn">Download as PDF</button>
+    </div>
+
+    <div class="summary-card" id="summaryCard"></div>
+
+    <div id="daysWrap"></div>
+  </div>
+
+  <footer>
+    <div class="foot-brand">Asella Organic × Claude AI</div>
+    <div class="copyright">© <span id="copyYear"></span> Asella Organic. All rights reserved.</div>
+    <div class="disclaimer">This planner gives general nutrition guidance based on standard calorie estimation formulas (Mifflin–St Jeor). It is not medical advice. Please consult a doctor or registered dietitian before starting any new eating plan, especially if you have an existing health condition. Your details are used only in your browser to generate this plan and are not stored or sent anywhere.</div>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ---------------- meal database ---------------- */
+const MEALS = {
+  gain: {
+    breakfast: [
+      {n:"Genfo with niter kibbeh & honey", d:"Hearty barley porridge, spiced butter well, honey drizzle", k:550},
+      {n:"Ful medames with bread & avocado", d:"Stewed fava beans, olive oil, soft bread, sliced avocado", k:600},
+      {n:"Chechebsa (kita fit-fit)", d:"Pan-fried flatbread pieces tossed in berbere butter", k:580},
+      {n:"Firfir with egg", d:"Torn injera in spiced sauce, topped with a fried egg", k:560},
+      {n:"Kinche with milk & butter", d:"Cracked wheat porridge, whole milk, butter, honey", k:520},
+      {n:"Enkulal firfir with avocado toast", d:"Scrambled spiced eggs, side of avocado on bread", k:600},
+      {n:"Ambasha with peanut butter & banana", d:"Sweet spiced bread, peanut butter, sliced banana", k:570}
+    ],
+    lunch: [
+      {n:"Doro wat, extra injera & egg", d:"Spiced chicken stew, boiled egg, double injera", k:750},
+      {n:"Kitfo leb-leb with ayib & gomen", d:"Cooked seasoned minced beef, cottage cheese, greens", k:800},
+      {n:"Beef tibs, injera & avocado salad", d:"Sautéed beef strips, peppers, onion, avocado side", k:780},
+      {n:"Beyaynetu combo platter", d:"Shiro, misir, gomen and atkilt on double injera", k:700},
+      {n:"Dulet with injera & ayib", d:"Minced tripe, liver and beef sauté, cottage cheese", k:720},
+      {n:"Yebeg tibs with rice & injera", d:"Spiced lamb sauté served with rice and injera", k:800},
+      {n:"Special shiro with boiled egg", d:"Chickpea stew rich in oil, injera, boiled egg", k:680}
+    ],
+    dinner: [
+      {n:"Tihlo with meat sauce", d:"Barley dumplings dipped in spiced meat sauce", k:650},
+      {n:"Minchet abesh", d:"Spiced minced meat stew with injera", k:700},
+      {n:"Kikil (beef shank stew)", d:"Slow-cooked beef shank in mild sauce, injera", k:680},
+      {n:"Doro tibs with bread", d:"Pan-fried spiced chicken pieces, soft bread", k:650},
+      {n:"Asa goulash (fish stew) with rice", d:"Spiced fish stew served over rice", k:600},
+      {n:"Zilzil tibs with injera & salad", d:"Strips of sautéed beef, side salad, injera", k:700},
+      {n:"Evening genfo with butter & honey", d:"Barley porridge, spiced butter, honey", k:600}
+    ]
+  },
+  lose: {
+    breakfast: [
+      {n:"Chia seed pudding with berries", d:"Asella Organic chia soaked overnight, fresh berries, a little honey", k:250, boost:true},
+      {n:"Light kinche with cinnamon", d:"Cracked wheat porridge, no butter, cinnamon", k:300},
+      {n:"Fruit plate with moringa yogurt", d:"Seasonal fruit, plain yogurt with a pinch of moringa powder", k:230, boost:true},
+      {n:"Small firfir, extra vegetables", d:"Torn injera in light sauce, minimal oil, extra greens", k:280},
+      {n:"Oat genfo, light version", d:"Porridge made light, cinnamon, no added sugar", k:270},
+      {n:"Boiled egg & tomato-onion salad", d:"Boiled egg, timatim salad, small piece of injera", k:300},
+      {n:"Roasted kolo with herbal tea", d:"Roasted barley snack, small portion, herbal tea", k:260}
+    ],
+    lunch: [
+      {n:"Light shiro with side salad", d:"Chickpea stew, reduced oil, small injera, fresh salad", k:420},
+      {n:"Gomen & misir wat", d:"Collard greens with red lentil stew, small injera", k:450},
+      {n:"Atkilt wat", d:"Cabbage, carrot and potato stew, small injera", k:400},
+      {n:"Azifa lentil salad", d:"Cold green lentil salad with herbs and lemon", k:380},
+      {n:"Fasting beyaynetu", d:"Shiro, gomen and misir on a small injera", k:430},
+      {n:"Grilled asa (fish) with vegetables", d:"Grilled fish, steamed vegetables, no injera", k:400},
+      {n:"Timatim salad & misir wat", d:"Tomato onion salad with red lentil stew, small injera", k:410}
+    ],
+    dinner: [
+      {n:"Light misir wat & steamed vegetables", d:"Red lentil stew, steamed vegetables, small injera", k:380},
+      {n:"Vegetable soup & dabo slice", d:"Mixed vegetable soup, small slice of bread", k:320},
+      {n:"Grilled chicken tibs & salad", d:"Lightly oiled grilled chicken strips, fresh salad", k:420},
+      {n:"Gomen & boiled potato", d:"Collard greens with boiled potato, no injera", k:350},
+      {n:"Ergo with cucumber & herbs", d:"Ethiopian yogurt with cucumber and fresh herbs", k:300},
+      {n:"Light shiro fitfit, extra greens", d:"Shiro mixed with torn injera and extra vegetables", k:380},
+      {n:"Steamed fish with lemon", d:"Steamed fish fillet, lemon, side vegetables", k:370}
+    ]
+  }
+};
+
+const DAY_NAMES = ["Day 1 · Monday","Day 2 · Tuesday","Day 3 · Wednesday","Day 4 · Thursday","Day 5 · Friday","Day 6 · Saturday","Day 7 · Sunday"];
+
+/* icons */
+const ICONS = {
+  breakfast:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 10h13a5 5 0 0 1 0 10H4V10z" stroke="#2F4B2A" stroke-width="1.6"/><path d="M17 12h1a3 3 0 0 1 0 6h-1" stroke="#2F4B2A" stroke-width="1.6"/></svg>',
+  lunch:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#B23A1E" stroke-width="1.6"/></svg>',
+  dinner:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 3v9M6 3c-1.5 0-2 1-2 2v4c0 1 .5 2 2 2M6 12v9M18 3v18M18 3c1.5.5 2 2 2 4s-.5 3.5-2 4" stroke="#7A4A2B" stroke-width="1.5"/></svg>',
+  booster:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2c2 3 2 4 0 6-2-2-2-3 0-6z" fill="#D9A441"/><circle cx="8" cy="14" r="1.4" fill="#7A4A2B"/><circle cx="12" cy="17" r="1.4" fill="#7A4A2B"/><circle cx="16" cy="14" r="1.4" fill="#7A4A2B"/></svg>'
+};
+
+document.getElementById("copyYear").textContent = new Date().getFullYear();
+
+let goal = "gain";
+
+document.getElementById("btnGain").onclick = () => setGoal("gain");
+document.getElementById("btnLose").onclick = () => setGoal("lose");
+function setGoal(g){
+  goal = g;
+  document.getElementById("btnGain").classList.toggle("active", g==="gain");
+  document.getElementById("btnLose").classList.toggle("active", g==="lose");
+}
+
+function pick(arr, i){ return arr[i % arr.length]; }
+
+document.getElementById("genBtn").onclick = () => {
+  const age = parseFloat(document.getElementById("age").value);
+  const gender = document.getElementById("gender").value;
+  const height = parseFloat(document.getElementById("height").value);
+  const weight = parseFloat(document.getElementById("weight").value);
+  const activity = parseFloat(document.getElementById("activity").value);
+  const errEl = document.getElementById("errMsg");
+
+  if(!age || age<14 || age>90 || !height || height<120 || height>230 || !weight || weight<30 || weight>220){
+    errEl.style.display = "block";
+    return;
+  }
+  errEl.style.display = "none";
+
+  const bmr = gender === "male"
+    ? 10*weight + 6.25*height - 5*age + 5
+    : 10*weight + 6.25*height - 5*age - 161;
+  const tdee = bmr * activity;
+  const target = goal === "gain" ? tdee + 400 : Math.max(tdee - 400, 1200);
+
+  renderSummary(bmr, tdee, target, goal);
+  renderDays(goal);
+
+  document.getElementById("results").style.display = "block";
+  document.getElementById("results").scrollIntoView({behavior:"smooth", block:"start"});
+};
+
+function renderSummary(bmr, tdee, target, goal){
+  const el = document.getElementById("summaryCard");
+  el.innerHTML = `
+    <div class="s-item"><div class="s-label">Goal</div><div class="s-value">${goal==="gain"?"Weight Gain":"Weight Loss"}</div></div>
+    <div class="s-item"><div class="s-label">Base Metabolic Rate</div><div class="s-value">${Math.round(bmr)} kcal</div></div>
+    <div class="s-item"><div class="s-label">Maintenance (TDEE)</div><div class="s-value">${Math.round(tdee)} kcal</div></div>
+    <div class="s-item"><div class="s-label">Daily Target</div><div class="s-value">${Math.round(target)} kcal</div></div>
+  `;
+}
+
+function renderDays(goal){
+  const wrap = document.getElementById("daysWrap");
+  wrap.innerHTML = "";
+  const set = MEALS[goal];
+
+  for(let i=0;i<7;i++){
+    const b = pick(set.breakfast, i);
+    const l = pick(set.lunch, i+2);
+    const d = pick(set.dinner, i+4);
+
+    const moringaUse = goal==="gain"
+      ? "Stirred into morning porridge or a smoothie"
+      : "Stirred into hibiscus tea or plain yogurt";
+    const teaSweet = goal==="gain" ? "with a spoon of honey" : "unsweetened";
+
+    const boosters = [
+      {icon:"booster", slot:"Morning Ritual", name:"Asella Organic Hibiscus Tea", desc:`Brewed fresh, served ${teaSweet}`, k:goal==="gain"?40:10},
+      {icon:"booster", slot:"Morning Ritual", name:"Asella Organic Moringa Powder (1 tsp)", desc:moringaUse, k:15},
+      {icon:"booster", slot:"Afternoon Boost", name:"Asella Organic Pumpkin Seeds (2 tbsp, roasted)", desc:"A midday handful for sustained energy", k:90},
+      {icon:"booster", slot:"Afternoon Boost", name:"Asella Organic Chia Seeds (1 tbsp)", desc:"Mixed into water, yogurt or afternoon tea", k:60}
+    ];
+
+    const total = b.k + l.k + d.k + boosters.reduce((s,x)=>s+x.k,0);
+
+    const card = document.createElement("div");
+    card.className = "day-card";
+    card.innerHTML = `
+      <div class="day-head">
+        <div class="dname">${DAY_NAMES[i]}</div>
+        <div class="dtotal">~${total} kcal total</div>
+      </div>
+      ${mealRow("breakfast","Breakfast", b)}
+      ${boosters.slice(0,2).map(x=>boosterRow(x)).join("")}
+      ${mealRow("lunch","Lunch", l)}
+      ${boosters.slice(2,4).map(x=>boosterRow(x)).join("")}
+      ${mealRow("dinner","Dinner", d)}
+    `;
+    wrap.appendChild(card);
+  }
+}
+
+function mealRow(iconKey, slot, item){
+  return `
+    <div class="meal-row">
+      <div class="icon-wrap">${ICONS[iconKey]}</div>
+      <div class="m-slot">${slot}</div>
+      <div class="m-body">
+        <div class="m-name">${item.n}</div>
+        <div class="m-desc">${item.d}</div>
+      </div>
+      <div class="m-kcal">${item.k} kcal</div>
+    </div>`;
+}
+function boosterRow(x){
+  return `
+    <div class="meal-row booster-row">
+      <div class="icon-wrap">${ICONS.booster}</div>
+      <div class="m-slot">${x.slot}</div>
+      <div class="m-body">
+        <div class="m-name">${x.name}</div>
+        <div class="m-desc">${x.desc}</div>
+      </div>
+      <div class="m-kcal">${x.k} kcal</div>
+    </div>`;
+}
+
+/* ---------------- PDF export ---------------- */
+document.getElementById("pdfBtn").onclick = async () => {
+  const btn = document.getElementById("pdfBtn");
+  const originalText = btn.textContent;
+  btn.textContent = "Preparing PDF…";
+  btn.disabled = true;
+
+  const target = document.getElementById("results");
+  const canvas = await html2canvas(target, {scale:2, backgroundColor:"#F4ECD8", useCORS:true});
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p","pt","a4");
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  const imgW = pageW;
+  const imgH = canvas.height * (imgW / canvas.width);
+
+  let heightLeft = imgH;
+  let position = 0;
+  const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+  pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
+  heightLeft -= pageH;
+
+  while (heightLeft > 0){
+    position = heightLeft - imgH;
+    pdf.addPage();
+    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
+    heightLeft -= pageH;
+  }
+
+  pdf.save("asella-organic-meal-plan.pdf");
+  btn.textContent = originalText;
+  btn.disabled = false;
+};
+</script>
+</body>
+</html>
